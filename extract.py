@@ -14,7 +14,6 @@ You'll edit this file in Task 2.
 """
 import csv
 import json
-
 from models import NearEarthObject, CloseApproach
 
 
@@ -24,8 +23,28 @@ def load_neos(neo_csv_path):
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
-    # TODO: Load NEO data from the given CSV file.
-    return ()
+    # [DONE] TODO: Load NEO data from the given CSV file.
+    neos = []
+
+    with open(neo_csv_path) as f:
+        csv_data = csv.DictReader(f)
+
+        for item in csv_data:
+            try:
+                neo = NearEarthObject(
+                    designation=item["pdes"],
+                    name=item["name"],
+                    diameter=item["diameter"] if item["diameter"] != "" else "nan",
+                    hazardous=True if item["pha"] == "Y" else False
+                )
+
+            except Exception as e:
+                print(e.__str__())
+
+            else:
+                neos.append(neo)
+
+    return neos
 
 
 def load_approaches(cad_json_path):
@@ -34,5 +53,27 @@ def load_approaches(cad_json_path):
     :param neo_csv_path: A path to a JSON file containing data about close approaches.
     :return: A collection of `CloseApproach`es.
     """
-    # TODO: Load close approach data from the given JSON file.
-    return ()
+    # [DONE] TODO: Load close approach data from the given JSON file.
+    cas = []
+
+    with open(cad_json_path) as f:
+        json_data = json.load(f)
+        json_data = [dict(zip(json_data["fields"], data)) for data in json_data["data"]]
+
+        for item in json_data:
+            try:
+                ca = CloseApproach(
+                    designation=item["des"],
+                    dt=item["cd"],
+                    distance=item["dist"],
+                    velocity=item["v_rel"]
+                )
+
+            except Exception as e:
+                print(e.__str__())
+                continue
+
+            else:
+                cas.append(ca)
+
+    return cas
