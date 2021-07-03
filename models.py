@@ -25,16 +25,17 @@ class NearEarthObject:
     """A near-Earth object (NEO).
 
     An NEO encapsulates semantic and physical parameters about the object, such
-    as its primary designation (required, unique), IAU name (optional), diameter
-    in kilometers (optional - sometimes unknown), and whether it's marked as
-    potentially hazardous to Earth.
+    as its primary designation (required, unique), IAU name (optional),
+    diameter in kilometers (optional - sometimes unknown), and whether it's
+    marked as potentially hazardous to Earth.
 
     A `NearEarthObject` also maintains a collection of its close approaches -
     initialized to an empty collection, but eventually populated in the
     `NEODatabase` constructor.
     """
 
-    def __init__(self, designation: str, hazardous: bool, name: str = None, diameter: float = "nan"):
+    def __init__(self, designation: str, hazardous: bool, name: str = None,
+                 diameter: float = "nan"):
         """Create a new `NearEarthObject`.
 
         :param designation: Primary designation of the NEO.
@@ -56,28 +57,33 @@ class NearEarthObject:
         hazardous = "" if self.hazardous else "not"
 
         if math.isnan(self.diameter):
-            return (f"NEO {self.fullname} has a diameter of {self.diameter:.3f} km"
-                    f" and is {hazardous} potentially hazardous.")
+            return (f"NEO {self.fullname} has a diameter of"
+                    f" {self.diameter:.3f} km and is"
+                    f" {hazardous} potentially hazardous.")
 
         return f"NEO {self.fullname} is {hazardous} potentially hazardous."
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
-        return (f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
-                f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
+        """Return `repr(self)`, a computer-readable string representation of
+        this object."""
+        return (f"NearEarthObject(designation={self.designation!r},"
+                f" name={self.name!r}, diameter={self.diameter:.3f},"
+                f" hazardous={self.hazardous!r})")
 
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        return f"{self.designation} ({self.name})" if self.name else f"{self.designation}"
+        return f"{self.designation} ({self.name})" \
+               if self.name else f"{self.designation}"
+
 
 class CloseApproach:
     """A close approach to Earth by an NEO.
 
-    A `CloseApproach` encapsulates information about the NEO's close approach to
-    Earth, such as the date and time (in UTC) of closest approach, the nominal
-    approach distance in astronomical units, and the relative approach velocity
-    in kilometers per second.
+    A `CloseApproach` encapsulates information about the NEO's close approach
+    to Earth, such as the date and time (in UTC) of closest approach, the
+    nominal approach distance in astronomical units, and the relative approach
+    velocity in kilometers per second.
 
     A `CloseApproach` also maintains a reference to its `NearEarthObject` -
     initally, this information (the NEO's primary designation) is saved in a
@@ -85,13 +91,16 @@ class CloseApproach:
     `NEODatabase` constructor.
     """
 
-    def __init__(self, designation: str, dt: str, distance: float, velocity: float):
+    def __init__(self, designation: str, dt: str, distance: float,
+                 velocity: float):
         """Create a new `CloseApproach`.
 
         :param designation: Primary designation of the NEO.
-        :param dt: NASA-formatted calendar date/time in UTC of the closest approach.
+        :param dt: NASA-formatted calendar date/time in UTC of the closest
+        approach.
         :param distance: The nominal approach distance in astronomical units.
-        :param velocity: The relative approach velocity in kilometers per second.
+        :param velocity: The relative approach velocity in kilometers per
+        second.
         """
 
         self._designation = str(designation)
@@ -109,18 +118,21 @@ class CloseApproach:
                 f" {self.velocity:.2f} km/s.")
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
-        return (f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, "
-                f"velocity={self.velocity:.2f}, neo={self.neo!r})")
+        """Return `repr(self)`, a computer-readable string representation of
+        this object."""
+        return (f"CloseApproach(time={self.time_str!r},"
+                f" distance={self.distance:.2f},"
+                f" velocity={self.velocity:.2f}, neo={self.neo!r})")
 
     @property
     def time_str(self):
-        """Return a formatted representation of this `CloseApproach`'s approach time.
+        """Return a formatted representation of this `CloseApproach`'s
+        approach time.
 
         The value in `self.time` should be a Python `datetime` object. While a
-        `datetime` object has a string representation, the default representation
-        includes seconds - significant figures that don't exist in our input
-        data set.
+        `datetime` object has a string representation, the default
+        representation includes seconds - significant figures that don't exist
+        in our input data set.
 
         The `datetime_to_str` method converts a `datetime` object to a
         formatted string that can be used in human-readable representations and
@@ -129,6 +141,8 @@ class CloseApproach:
         return datetime_to_str(self.time)
 
     def serialize_for_json(self):
+        neo_diameter = self.neo.diameter if not math. \
+            isnan(self.neo.diameter) else 0.0
         return {
             'datetime_utc': self.time_str,
             'distance_au': self.distance,
@@ -136,18 +150,20 @@ class CloseApproach:
             'neo': {
                 'designation': self.neo.designation,
                 'name': self.neo.name if self.neo.name is not None else "",
-                'diameter_km': self.neo.diameter if not math.isnan(self.neo.diameter) else 0.0,
+                'diameter_km': neo_diameter,
                 'potentially_hazardous': self.neo.hazardous
             }
         }
 
     def serialize_for_csv(self):
+        neo_diameter = self.neo.diameter if not math. \
+            isnan(self.neo.diameter) else 0.0
         return {
             'datetime_utc': self.time_str,
             'distance_au': self.distance,
             'velocity_km_s': self.velocity,
             'designation': self.neo.designation,
             'name': self.neo.name if self.neo.name is not None else "",
-            'diameter_km': self.neo.diameter if not math.isnan(self.neo.diameter) else 0.0,
+            'diameter_km': neo_diameter,
             'potentially_hazardous': self.neo.hazardous
         }
