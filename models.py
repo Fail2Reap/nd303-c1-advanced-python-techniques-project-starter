@@ -17,7 +17,6 @@ quirks of the data set, such as missing names and unknown diameters.
 
 You'll edit this file in Task 1.
 """
-from datetime import date, datetime
 import math
 from helpers import cd_to_datetime, datetime_to_str
 

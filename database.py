@@ -38,8 +38,8 @@ class NEODatabase:
         :param neos: A collection of `NearEarthObject`s.
         :param approaches: A collection of `CloseApproach`es.
         """
-        self._neos_only = neos
-        self._approaches_only = approaches
+        self._neos = neos
+        self._approaches = approaches
 
         # [DONE] TODO: Link together the NEOs and their close approaches.
         for neo in neos:
@@ -104,6 +104,13 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
+        # [DONE] TODO: Generate `CloseApproach` objects that match all of the filters.
+        filtered_results = []
+
         for approach in self._approaches:
-            yield approach
+            matched_filters = [filter for filter in filters if filter(approach)]
+
+            if len(matched_filters) == len(filters):
+                filtered_results.append(approach)
+
+        return filtered_results
