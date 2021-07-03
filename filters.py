@@ -176,7 +176,7 @@ def create_filters(date=None, start_date=None,
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # [DONE] TODO: Decide how you will represent your filters.
+
     filters = []
 
     if date:
@@ -221,5 +221,4 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # [DONE] TODO: Produce at most `n` values from the given iterator.
     return list(iterator) if n is None or n == 0 else list(itertools.islice(iterator, 0, n))
