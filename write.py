@@ -48,5 +48,5 @@ def write_to_json(results, filename):
 
     data = [result.serialize_for_json() for result in results]
 
-    with open(filename, mode='w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2)
+    with open(filename, mode='w', encoding='utf-8') as json_file:
+        json.dump(data, json_file, indent=2)
